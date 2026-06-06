@@ -25,27 +25,23 @@
 
 ## 🚀 快速开始
 
-### 方式一：直接运行 EXE（推荐）
-
-1. 进入 `release/GameVault-win32-x64` 目录
-2. 双击 `GameVault.exe` 或 `启动GameVault.bat`
-
-### 方式二：从源码运行
+### 方式一：从源码运行（推荐）
 
 ```bash
+git clone https://github.com/DrFlyingPig/GameVault.git
 cd GameVault
 npm install
 npm start
 ```
 
-### 方式三：打包为 EXE
+### 方式二：打包为 EXE
 
 ```bash
 npm install
 npm run build
 ```
 
-打包后的文件在 `release/GameVault-win32-x64` 目录中。
+打包完成后，进入 `release/GameVault-win32-x64` 目录，双击 `GameVault.exe` 即可运行。
 
 ## 📖 使用指南
 
@@ -95,18 +91,14 @@ GameVault/
 ├── build.js             # 打包脚本
 ├── package.json         # 项目配置
 ├── icon.png             # 应用图标
-├── public/
-│   ├── index.html       # 主页面
-│   ├── css/style.css    # 样式文件
-│   └── js/
-│       ├── app.js       # 主应用逻辑
-│       ├── api.js       # API 封装
-│       ├── ui.js        # UI 组件
-│       └── utils.js     # 工具函数
-└── release/             # 打包输出目录
-    └── GameVault-win32-x64/
-        ├── GameVault.exe
-        └── resources/app/
+└── public/
+    ├── index.html       # 主页面
+    ├── css/style.css    # 样式文件
+    └── js/
+        ├── app.js       # 主应用逻辑
+        ├── api.js       # API 封装
+        ├── ui.js        # UI 组件
+        └── utils.js     # 工具函数
 ```
 
 ## ⌨️ 快捷键
