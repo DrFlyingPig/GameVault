@@ -27,7 +27,7 @@
 
 ### 方式一：下载 EXE（推荐）
 
-前往 [Releases](https://github.com/DrFlyingPig/GameVault/releases) 页面下载最新版本的 `GameVault.exe`，双击即可运行。
+前往 [Releases](https://github.com/DrFlyingPig/GameVault/releases) 页面下载 `GameVault-v1.0.0-win32-x64.zip`，解压后双击 `GameVault.exe` 即可运行。
 
 ### 方式二：从源码运行
 
