@@ -1,0 +1,9 @@
+node_modules/
+release/
+*.db
+data/*.json
+!data/.gitkeep
+uploads/
+.env
+.DS_Store
+Thumbs.db

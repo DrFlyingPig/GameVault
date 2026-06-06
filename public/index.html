@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GameVault - 游戏管理系统</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- 顶部导航栏 -->
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="logo">
+        <span class="logo-icon">🎮</span>
+        <span class="logo-text">GameVault</span>
+      </div>
+    </div>
+    <div class="topbar-center">
+      <div class="search-box">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="搜索游戏、开发商、标签..." autocomplete="off">
+        <kbd class="search-kbd">Ctrl+K</kbd>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="active-games-indicator" id="activeIndicator" style="display:none;">
+        <span class="pulse-dot"></span>
+        <span id="activeCount">0</span> 个游戏运行中
+      </div>
+      <button class="btn-icon" id="btnStats" title="统计面板">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 20V10M12 20V4M6 20v-6"/>
+        </svg>
+      </button>
+      <button class="btn-icon" id="btnSettings" title="设置">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+        </svg>
+      </button>
+      <button class="btn-icon" id="btnAddGame" title="导入游戏">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 5v14M5 12h14"/>
+        </svg>
+      </button>
+      <div class="view-toggle">
+        <button class="btn-icon active" id="btnGridView" title="网格视图">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+            <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="btnListView" title="列表视图">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="main-layout">
+    <!-- 左侧边栏 -->
+    <aside class="sidebar" id="sidebar">
+      <nav class="sidebar-nav" id="sidebarNav">
+        <!-- 动态生成分类 -->
+      </nav>
+      <div class="sidebar-footer">
+        <button class="btn-add-category" id="btnAddCategory">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <path d="M12 5v14M5 12h14"/>
+          </svg>
+          添加分类
+        </button>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 排序栏 -->
+      <div class="content-header">
+        <h2 class="content-title" id="contentTitle">全部游戏</h2>
+        <div class="content-controls">
+          <select id="sortSelect" class="select-styled">
+            <option value="recent">最近添加</option>
+            <option value="title">按名称</option>
+            <option value="playtime">按时长</option>
+            <option value="rating">按评分</option>
+          </select>
+          <span class="game-count" id="gameCount">0 款游戏</span>
+        </div>
+      </div>
+
+      <!-- 游戏网格 -->
+      <div class="games-grid" id="gamesGrid">
+        <!-- 动态生成游戏卡片 -->
+      </div>
+
+      <!-- 空状态 -->
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="empty-icon">🎮</div>
+        <h3>还没有游戏</h3>
+        <p>点击右上角的 + 按钮导入你的第一款游戏</p>
+        <button class="btn-primary" id="btnAddGameEmpty">导入游戏</button>
+      </div>
+    </main>
+  </div>
+
+  <!-- 游戏详情侧边面板 -->
+  <div class="detail-overlay" id="detailOverlay">
+    <div class="detail-panel" id="detailPanel">
+      <button class="detail-close" id="detailClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+      <div class="detail-cover-wrapper">
+        <img class="detail-cover" id="detailCover" src="" alt="">
+        <button class="btn-change-cover" id="btnChangeCover">更换封面</button>
+        <input type="file" id="coverFileInput" accept="image/*" style="display:none;">
+      </div>
+      <div class="detail-content">
+        <div class="detail-header">
+          <h2 class="detail-title" id="detailTitle"></h2>
+          <button class="btn-favorite" id="btnFavorite" title="收藏">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </button>
+        </div>
+        <div class="detail-meta">
+          <span class="meta-tag" id="detailCategory"></span>
+          <span class="meta-tag" id="detailDeveloper"></span>
+          <span class="meta-tag" id="detailYear"></span>
+        </div>
+        <div class="detail-stats">
+          <div class="stat-item">
+            <span class="stat-value" id="detailPlaytime">0</span>
+            <span class="stat-label">游玩时长</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="detailSessions">0</span>
+            <span class="stat-label">游玩次数</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value" id="detailLastPlayed">-</span>
+            <span class="stat-label">上次游玩</span>
+          </div>
+        </div>
+        <div class="detail-rating" id="detailRating">
+          <span class="rating-label">评分</span>
+          <div class="rating-stars" id="ratingStars"></div>
+        </div>
+        <div class="detail-description">
+          <h4>简介</h4>
+          <p id="detailDesc"></p>
+        </div>
+        <div class="detail-notes">
+          <h4>备注</h4>
+          <textarea id="detailNotes" placeholder="添加备注..."></textarea>
+        </div>
+        <div class="detail-tags">
+          <h4>标签</h4>
+          <input type="text" id="detailTags" placeholder="用逗号分隔标签">
+        </div>
+        <div class="detail-actions">
+          <button class="btn-primary btn-launch" id="btnLaunch">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            启动游戏
+          </button>
+          <button class="btn-danger btn-stop" id="btnStop" style="display:none;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+              <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
+            </svg>
+            停止游戏
+          </button>
+          <button class="btn-secondary" id="btnEdit">编辑信息</button>
+          <button class="btn-danger-outline" id="btnDelete">删除游戏</button>
+        </div>
+        <div class="detail-sessions">
+          <h4>游玩记录</h4>
+          <div class="sessions-list" id="sessionsList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 导入游戏弹窗 -->
+  <div class="modal-overlay" id="addGameModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modalTitle">导入游戏</h3>
+        <button class="modal-close" id="addGameClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>游戏名称 <span class="required">*</span></label>
+          <input type="text" id="gameTitle" placeholder="输入游戏名称" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>可执行文件路径</label>
+            <div class="file-input-wrapper">
+              <input type="text" id="gameExePath" placeholder="选择 .exe 文件">
+              <button class="btn-browse" id="btnBrowse">浏览</button>
+            </div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>开发商</label>
+            <input type="text" id="gameDeveloper" placeholder="开发商名称">
+          </div>
+          <div class="form-group">
+            <label>发行商</label>
+            <input type="text" id="gamePublisher" placeholder="发行商名称">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>发售年份</label>
+            <input type="text" id="gameYear" placeholder="如: 2024">
+          </div>
+          <div class="form-group">
+            <label>分类</label>
+            <select id="gameCategory" class="select-styled"></select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>评分</label>
+          <div class="rating-input" id="ratingInput">
+            <span class="star" data-value="1">★</span>
+            <span class="star" data-value="2">★</span>
+            <span class="star" data-value="3">★</span>
+            <span class="star" data-value="4">★</span>
+            <span class="star" data-value="5">★</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>标签</label>
+          <input type="text" id="gameTags" placeholder="用逗号分隔，如: 开放世界, 剧情, 多人">
+        </div>
+        <div class="form-group">
+          <label>简介</label>
+          <textarea id="gameDescription" rows="3" placeholder="游戏简介..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="addGameCancel">取消</button>
+        <button class="btn-primary" id="addGameSave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 统计面板弹窗 -->
+  <div class="modal-overlay" id="statsModal">
+    <div class="modal modal-large">
+      <div class="modal-header">
+        <h3>📊 游戏统计</h3>
+        <button class="modal-close" id="statsClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="stats-overview" id="statsOverview"></div>
+        <div class="stats-charts">
+          <div class="stats-section">
+            <h4>🏆 游玩时长排行</h4>
+            <div class="top-games-list" id="topGamesList"></div>
+          </div>
+          <div class="stats-section">
+            <h4>📁 分类统计</h4>
+            <div class="category-stats-list" id="categoryStatsList"></div>
+          </div>
+          <div class="stats-section">
+            <h4>📅 最近游玩记录</h4>
+            <div class="recent-sessions-list" id="recentSessionsList"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 添加分类弹窗 -->
+  <div class="modal-overlay" id="categoryModal">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <h3>添加分类</h3>
+        <button class="modal-close" id="categoryClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>分类名称</label>
+          <input type="text" id="categoryName" placeholder="输入分类名称">
+        </div>
+        <div class="form-group">
+          <label>图标 (Emoji)</label>
+          <input type="text" id="categoryIcon" placeholder="🎮" maxlength="4">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="categoryCancel">取消</button>
+        <button class="btn-primary" id="categorySave">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 设置弹窗 -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>⚙️ 设置</h3>
+        <button class="modal-close" id="settingsClose">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="settings-section">
+          <h4>常规设置</h4>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">关闭窗口时</div>
+              <div class="setting-desc">选择关闭窗口时的行为</div>
+            </div>
+            <div class="setting-control">
+              <select id="settingExitBehavior" class="select-styled">
+                <option value="minimize">最小化到托盘</option>
+                <option value="exit">直接退出</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">默认视图</div>
+              <div class="setting-desc">启动时的默认游戏列表视图</div>
+            </div>
+            <div class="setting-control">
+              <select id="settingDefaultView" class="select-styled">
+                <option value="grid">网格视图</option>
+                <option value="list">列表视图</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">开机自启动</div>
+              <div class="setting-desc">系统启动时自动运行 GameVault</div>
+            </div>
+            <div class="setting-control">
+              <label class="toggle-switch">
+                <input type="checkbox" id="settingAutoLaunch">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
+          <h4>外观设置</h4>
+
+          <div class="setting-item">
+            <div class="setting-info">
+              <div class="setting-label">主题色</div>
+              <div class="setting-desc">自定义界面的强调色</div>
+            </div>
+            <div class="setting-control">
+              <div class="color-options">
+                <button class="color-option active" data-color="#6c5ce7" style="background:#6c5ce7"></button>
+                <button class="color-option" data-color="#0984e3" style="background:#0984e3"></button>
+                <button class="color-option" data-color="#00b894" style="background:#00b894"></button>
+                <button class="color-option" data-color="#e17055" style="background:#e17055"></button>
+                <button class="color-option" data-color="#e84393" style="background:#e84393"></button>
+                <button class="color-option" data-color="#fdcb6e" style="background:#fdcb6e"></button>
+                <button class="color-option" data-color="#00cec9" style="background:#00cec9"></button>
+                <button class="color-option" data-color="#636e72" style="background:#636e72"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary" id="settingsSave">保存设置</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast 通知 -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- 确认对话框 -->
+  <div class="modal-overlay" id="confirmModal">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <h3 id="confirmTitle">确认操作</h3>
+      </div>
+      <div class="modal-body">
+        <p id="confirmMessage"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="confirmCancel">取消</button>
+        <button class="btn-danger" id="confirmOk">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/utils.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/ui.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

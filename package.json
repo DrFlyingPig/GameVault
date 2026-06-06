@@ -1,0 +1,21 @@
+{
+  "name": "gamevault",
+  "version": "1.0.0",
+  "description": "电脑游戏管理系统 - GameVault",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "node build.js"
+  },
+  "author": "GameVault",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "multer": "^1.4.5-lts.1"
+  },
+  "devDependencies": {
+    "electron": "^28.3.3"
+  }
+}
