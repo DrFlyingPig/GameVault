@@ -1,6 +1,7 @@
 node_modules/
 release/
 *.db
+.claude/
 data/*.json
 !data/.gitkeep
 uploads/
