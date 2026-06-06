@@ -117,6 +117,25 @@ if (fs.existsSync(path.join(ROOT_DIR, 'icon.png'))) {
 // 复制前端文件
 copyDir(path.join(ROOT_DIR, 'public'), path.join(appResourcesDir, 'public'));
 
+// 复制 node_modules（排除 electron 等开发依赖）
+console.log('  复制运行时依赖...');
+const skipDeps = ['electron', '@electron'];
+const nmSrc = path.join(ROOT_DIR, 'node_modules');
+const nmDest = path.join(appResourcesDir, 'node_modules');
+fs.mkdirSync(nmDest, { recursive: true });
+const nmItems = fs.readdirSync(nmSrc);
+for (const item of nmItems) {
+  if (skipDeps.includes(item)) continue;
+  const srcPath = path.join(nmSrc, item);
+  const destPath = path.join(nmDest, item);
+  const stat = fs.statSync(srcPath);
+  if (stat.isDirectory()) {
+    copyDir(srcPath, destPath);
+  } else {
+    copyFile(srcPath, destPath);
+  }
+}
+
 // 恢复备份的数据（如果有）
 console.log('[6/6] 恢复游戏数据...');
 const dataDir = path.join(appResourcesDir, 'data');
