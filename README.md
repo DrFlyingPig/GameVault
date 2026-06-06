@@ -25,7 +25,13 @@
 
 ## 🚀 快速开始
 
-### 方式一：从源码运行（推荐）
+### 方式一：下载 EXE（推荐）
+
+前往 [Releases](https://github.com/DrFlyingPig/GameVault/releases) 页面下载最新版本的 `GameVault.exe`，双击即可运行。
+
+### 方式二：从源码运行
+
+需要先安装 [Node.js](https://nodejs.org/)
 
 ```bash
 git clone https://github.com/DrFlyingPig/GameVault.git
@@ -34,7 +40,7 @@ npm install
 npm start
 ```
 
-### 方式二：打包为 EXE
+### 方式三：打包为 EXE
 
 ```bash
 npm install
