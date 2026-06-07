@@ -84,6 +84,7 @@ function createMainWindow() {
     icon: iconPath,
     show: false, // 先隐藏，加载完成后再显示
     backgroundColor: '#0a0a12',
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
