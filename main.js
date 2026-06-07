@@ -84,7 +84,6 @@ function createMainWindow() {
     icon: iconPath,
     show: false, // 先隐藏，加载完成后再显示
     backgroundColor: '#0a0a12',
-    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -95,6 +94,9 @@ function createMainWindow() {
     // frame: false,
     // titleBarStyle: 'hiddenInset',
   });
+
+  // 隐藏菜单栏，按 Alt 键切换显示
+  mainWindow.setMenuBarVisibility(false);
 
   // 加载应用页面
   mainWindow.loadURL(SERVER_URL);
@@ -114,6 +116,14 @@ function createMainWindow() {
   if (isDevMode) {
     mainWindow.webContents.openDevTools();
   }
+
+  // Alt 键切换菜单栏显示
+  mainWindow.webContents.on('before-input-event', (event, input) => {
+    if (input.key === 'Alt' && input.type === 'keyDown') {
+      const isVisible = mainWindow.isMenuBarVisible();
+      mainWindow.setMenuBarVisibility(!isVisible);
+    }
+  });
 
   // 窗口关闭时的行为（根据设置决定）
   mainWindow.on('close', (event) => {
