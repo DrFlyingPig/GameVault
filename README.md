@@ -29,9 +29,11 @@
 
 前往 [Releases](https://github.com/DrFlyingPig/GameVault/releases) 页面下载 `GameVault-win32-x64.zip`，解压后双击 `GameVault.exe` 即可运行。
 
-### 方式二：从源码运行
+### 方式二：从源码运行或打包成 EXE
 
 需要先安装 [Node.js](https://nodejs.org/)
+
+#### 源码运行
 
 ```bash
 git clone https://github.com/DrFlyingPig/GameVault.git
@@ -40,9 +42,11 @@ npm install
 npm start
 ```
 
-### 方式三：打包为 EXE
+#### 打包为 EXE
 
 ```bash
+git clone https://github.com/DrFlyingPig/GameVault.git
+cd GameVault
 npm install
 npm run build
 ```
