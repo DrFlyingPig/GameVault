@@ -267,6 +267,8 @@ app.post('/api/games/:id/launch', async (req, res) => {
         exec(`start "" "${game.executable_path}"`, {
           cwd: path.dirname(game.executable_path),
           windowsHide: true,
+        }, (err) => {
+          if (err) console.error('启动游戏失败:', err.message);
         });
         mode = 'auto';
       } catch (err) {
