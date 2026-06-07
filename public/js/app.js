@@ -35,7 +35,7 @@ const App = {
   async loadCategories() {
     try {
       App.categories = await API.getCategories();
-      UI.renderSidebar(App.categories, App.games);
+      UI.renderSidebar(App.categories, App.allGames || App.games);
       UI.renderCategorySelect(App.categories);
     } catch (err) {
       console.error('加载分类失败:', err);
@@ -51,9 +51,14 @@ const App = {
       else if (App.currentCategory !== '全部游戏') params.category = App.currentCategory;
       params.sort = App.currentSort;
 
-      App.games = await API.getGames(params);
+      const [games, allGames] = await Promise.all([
+        API.getGames(params),
+        API.getGames({ sort: App.currentSort }),
+      ]);
+      App.games = games;
+      App.allGames = allGames;
       UI.renderGamesGrid(App.games);
-      UI.renderSidebar(App.categories, App.games);
+      UI.renderSidebar(App.categories, App.allGames);
     } catch (err) {
       console.error('加载游戏失败:', err);
       Utils.showToast('加载游戏列表失败', 'error');
