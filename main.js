@@ -1,7 +1,6 @@
-const { app, BrowserWindow, Menu, Tray, nativeImage, dialog, shell, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, Tray, nativeImage, dialog, shell, ipcMain, utilityProcess } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { fork } = require('child_process');
 
 let mainWindow = null;
 let tray = null;
@@ -37,26 +36,22 @@ function startServer() {
   return new Promise((resolve, reject) => {
     const serverScript = path.join(__dirname, 'server.js');
 
-    serverProcess = fork(serverScript, [], {
+    serverProcess = utilityProcess.fork(serverScript, [], {
       cwd: __dirname,
-      silent: true,
-      env: { ...process.env, NODE_ENV: 'production' }
+      serviceName: 'gamevault-server',
     });
 
-    serverProcess.stdout.on('data', (data) => {
-      const output = data.toString();
-      console.log(output);
-      if (output.includes('GameVault')) {
-        resolve();
-      }
+    serverProcess.on('spawn', () => {
+      console.log('Server process spawned');
+      setTimeout(() => resolve(), 1500);
     });
 
-    serverProcess.stderr.on('data', (data) => {
-      console.error(`Server Error: ${data}`);
+    serverProcess.on('message', (msg) => {
+      console.log('Server:', msg);
     });
 
     serverProcess.on('error', (err) => {
-      console.error('Failed to start server:', err);
+      console.error('Server Error:', err);
       reject(err);
     });
 
