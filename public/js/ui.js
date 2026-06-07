@@ -94,6 +94,7 @@ const UI = {
         <span class="nav-icon">${cat.icon}</span>
         <span>${cat.name}</span>
         <span class="nav-count">${counts[cat.name] || 0}</span>
+        ${cat.id >= 14 ? `<span class="nav-delete" onclick="event.stopPropagation();App.deleteCategory(${cat.id},'${cat.name}')" title="删除分类">×</span>` : ''}
       </button>
     `).join('');
   },

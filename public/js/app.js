@@ -271,6 +271,20 @@ const App = {
     }
   },
 
+  async deleteCategory(id, name) {
+    if (!confirm(`确定要删除分类 "${name}" 吗？`)) return;
+    try {
+      await API.deleteCategory(id);
+      await App.loadCategories();
+      if (App.currentCategory === name) {
+        App.setCategory('全部游戏');
+      }
+      Utils.showToast(`分类 "${name}" 已删除`, 'success');
+    } catch (err) {
+      Utils.showToast(err.message, 'error');
+    }
+  },
+
   // ========== 游戏导入/编辑 ==========
 
   showAddModal(game = null) {
