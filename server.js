@@ -462,12 +462,25 @@ app.get('/api/stats', (req, res) => {
 
 // ========== 启动服务器 ==========
 
-app.listen(PORT, () => {
-  console.log(`
+function startServer(port) {
+  return new Promise((resolve, reject) => {
+    const server = app.listen(port || PORT, () => {
+      console.log(`
   ╔══════════════════════════════════════════╗
   ║         🎮 GameVault 服务器已启动         ║
   ║                                          ║
-  ║    访问地址: http://localhost:${PORT}        ║
+  ║    访问地址: http://localhost:${port || PORT}        ║
   ╚══════════════════════════════════════════╝
   `);
-});
+      resolve(server);
+    });
+    server.on('error', reject);
+  });
+}
+
+// 直接运行时自动启动
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = { startServer, app };

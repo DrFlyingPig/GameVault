@@ -31,17 +31,10 @@ if (!gotTheLock) {
 }
 
 // 启动 Express 服务器
-function startServer() {
-  return new Promise((resolve, reject) => {
-    try {
-      require('./server');
-      // 等待服务器启动
-      setTimeout(() => resolve(), 1000);
-    } catch (err) {
-      console.error('Failed to start server:', err);
-      reject(err);
-    }
-  });
+let serverInstance = null;
+async function startServer() {
+  const { startServer: start } = require('./server');
+  serverInstance = await start(PORT);
 }
 
 // 创建主窗口
