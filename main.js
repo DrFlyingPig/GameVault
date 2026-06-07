@@ -1,11 +1,9 @@
 const { app, BrowserWindow, Menu, Tray, nativeImage, dialog, shell, ipcMain } = require('electron');
 const path = require('path');
 const fs = require('fs');
-const { spawn } = require('child_process');
 
 let mainWindow = null;
 let tray = null;
-let serverProcess = null;
 let isDevMode = process.argv.includes('--dev');
 
 // 主进程中的设置缓存
@@ -35,38 +33,14 @@ if (!gotTheLock) {
 // 启动 Express 服务器
 function startServer() {
   return new Promise((resolve, reject) => {
-    // 在打包后的应用中，使用子进程启动服务器
-    const serverScript = path.join(__dirname, 'server.js');
-
-    serverProcess = spawn('node', [serverScript], {
-      cwd: __dirname,
-      stdio: 'pipe',
-      env: { ...process.env, NODE_ENV: 'production' }
-    });
-
-    serverProcess.stdout.on('data', (data) => {
-      const output = data.toString();
-      console.log(output);
-      if (output.includes('GameVault')) {
-        resolve();
-      }
-    });
-
-    serverProcess.stderr.on('data', (data) => {
-      console.error(`Server Error: ${data}`);
-    });
-
-    serverProcess.on('error', (err) => {
+    try {
+      require('./server');
+      // 等待服务器启动
+      setTimeout(() => resolve(), 1000);
+    } catch (err) {
       console.error('Failed to start server:', err);
       reject(err);
-    });
-
-    serverProcess.on('close', (code) => {
-      console.log(`Server process exited with code ${code}`);
-    });
-
-    // 超时处理
-    setTimeout(() => resolve(), 3000);
+    }
   });
 }
 
@@ -437,10 +411,4 @@ app.on('window-all-closed', () => {
 // 应用退出前清理
 app.on('before-quit', () => {
   app.isQuitting = true;
-
-  // 关闭服务器进程
-  if (serverProcess) {
-    serverProcess.kill();
-    serverProcess = null;
-  }
 });
