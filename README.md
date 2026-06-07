@@ -121,12 +121,17 @@ GameVault/
 | `F11` | 全屏切换 |
 | `F12` | 开发者工具 |
 | `Escape` | 关闭弹窗 |
+| `Alt` | 显示/隐藏菜单栏 |
+| `Ctrl + =` | 放大 |
+| `Ctrl + -` | 缩小 |
+| `Ctrl + 0` | 重置缩放 |
 
 ## 📝 API 接口
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
 | GET | /api/games | 获取游戏列表 |
+| GET | /api/games/:id | 获取单个游戏 |
 | POST | /api/games | 导入游戏 |
 | PUT | /api/games/:id | 更新游戏 |
 | DELETE | /api/games/:id | 删除游戏 |
@@ -135,6 +140,9 @@ GameVault/
 | POST | /api/games/:id/cover | 上传封面 |
 | GET | /api/games/:id/status | 获取运行状态 |
 | GET | /api/games/:id/sessions | 获取游玩记录 |
+| GET | /api/active | 获取活跃游戏 |
+| GET | /api/settings | 获取设置 |
+| PUT | /api/settings | 更新设置 |
 | GET | /api/stats | 获取统计 |
 | GET | /api/categories | 获取分类 |
 | POST | /api/categories | 创建分类 |
