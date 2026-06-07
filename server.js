@@ -12,7 +12,7 @@ const PORT = 3000;
 // 中间件
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // 文件上传配置
@@ -480,7 +480,10 @@ function startServer(port) {
 
 // 直接运行时自动启动
 if (require.main === module) {
-  startServer();
+  startServer().catch(err => {
+    console.error('服务器启动失败:', err);
+    process.exit(1);
+  });
 }
 
 module.exports = { startServer, app };
