@@ -291,7 +291,7 @@ function createAppMenu() {
               type: 'info',
               title: '关于 GameVault',
               message: 'GameVault - 电脑游戏管理系统',
-              detail: '版本 1.0.0\n\n一个精美、功能完善的电脑游戏管理系统，\n帮助你管理游戏库、追踪游玩时长、自定义封面等。\n\n© 2024 GameVault',
+              detail: '版本 1.0.0\n\n一个精美、功能完善的电脑游戏管理系统，\n帮助你管理游戏库、追踪游玩时长、自定义封面等。\n\n© 2026 GameVault',
               buttons: ['确定']
             });
           }
