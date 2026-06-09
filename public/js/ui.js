@@ -8,7 +8,7 @@ const UI = {
     const coverUrl = Utils.getCoverUrl(game);
     const runningInfo = App.runningGames.get(game.id);
     const isRunning = !!runningInfo;
-    const elapsed = isRunning ? runningInfo.elapsed : 0;
+    const elapsed = isRunning ? App.getElapsed(game.id) : 0;
     const mode = isRunning ? runningInfo.mode : null;
 
     return `

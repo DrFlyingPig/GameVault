@@ -10,7 +10,7 @@ const App = {
   currentSort: 'recent',
   currentSearch: '',
   selectedGame: null,
-  runningGames: new Map(), // gameId -> elapsed seconds
+  runningGames: new Map(), // gameId -> { startTime, mode }
   editMode: false,
   _timers: [],
 
@@ -422,7 +422,7 @@ const App = {
     try {
       const result = await API.launchGame(id);
       Utils.showToast(result.message, 'success');
-      App.runningGames.set(id, { elapsed: 0, mode: result.mode });
+      App.runningGames.set(id, { startTime: Date.now(), mode: result.mode });
       App.loadGames();
     } catch (err) {
       Utils.showToast(err.message, 'error');
@@ -434,7 +434,7 @@ const App = {
     try {
       const result = await API.launchGame(App.selectedGame.id);
       Utils.showToast(result.message, 'success');
-      App.runningGames.set(App.selectedGame.id, { elapsed: 0, mode: result.mode });
+      App.runningGames.set(App.selectedGame.id, { startTime: Date.now(), mode: result.mode });
       App.updateDetailRunState({ running: true, elapsed: 0, mode: result.mode });
       App.loadGames();
     } catch (err) {
@@ -640,21 +640,25 @@ const App = {
 
   // ========== 状态轮询 ==========
 
-  startStatusPolling() {
-    // 每秒更新运行中游戏的计时（本地计时）
-    setInterval(() => {
-      for (const [gameId, info] of App.runningGames) {
-        App.runningGames.set(gameId, { ...info, elapsed: info.elapsed + 1 });
-      }
+  // 计算游戏运行时长（基于时间戳，不受 setInterval 节流影响）
+  getElapsed(gameId) {
+    const info = App.runningGames.get(gameId);
+    if (!info) return 0;
+    return Math.floor((Date.now() - info.startTime) / 1000);
+  },
 
+  startStatusPolling() {
+    // 每秒更新 UI 显示（基于时间戳计算，不依赖 setInterval 计数）
+    setInterval(() => {
       // 更新卡片上的运行时间显示
       document.querySelectorAll('.game-card-running').forEach(el => {
         const card = el.closest('.game-card');
         const id = parseInt(card.dataset.id);
         const info = App.runningGames.get(id);
         if (info) {
+          const elapsed = App.getElapsed(id);
           const modeIcon = info.mode === 'auto' ? '🔄' : '👁️';
-          el.innerHTML = `<span class="pulse-dot"></span>运行中 ${Utils.formatElapsed(info.elapsed)} ${modeIcon}`;
+          el.innerHTML = `<span class="pulse-dot"></span>运行中 ${Utils.formatElapsed(elapsed)} ${modeIcon}`;
         } else {
           // 游戏已停止，移除运行状态显示
           el.remove();
@@ -664,6 +668,7 @@ const App = {
       // 更新详情面板中的停止按钮时间
       if (App.selectedGame && App.runningGames.has(App.selectedGame.id)) {
         const info = App.runningGames.get(App.selectedGame.id);
+        const elapsed = App.getElapsed(App.selectedGame.id);
         const stopBtn = document.getElementById('btnStop');
         if (stopBtn && stopBtn.style.display !== 'none') {
           const modeText = info.mode === 'auto' ? '自动追踪' : '手动计时';
@@ -671,7 +676,7 @@ const App = {
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
               <rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>
             </svg>
-            停止游戏 (${Utils.formatElapsed(info.elapsed)})
+            停止游戏 (${Utils.formatElapsed(elapsed)})
             <span style="font-size:0.7em;opacity:0.7;margin-left:4px;">${modeText}</span>
           `;
         }
@@ -695,10 +700,14 @@ const App = {
         const serverIds = new Set(active.map(g => g.id));
         let changed = false;
 
-        // 同步服务器端状态
+        // 同步服务器端状态（用服务器的 elapsed 反推 startTime）
         for (const game of active) {
           if (!App.runningGames.has(game.id)) {
-            App.runningGames.set(game.id, { elapsed: game.elapsed, mode: game.mode });
+            // 用服务器的 elapsed 反推 startTime，保证时间一致
+            App.runningGames.set(game.id, {
+              startTime: Date.now() - (game.elapsed * 1000),
+              mode: game.mode
+            });
             changed = true;
           }
         }
